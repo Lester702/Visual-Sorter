@@ -8,12 +8,24 @@
 int x = 0;
 int i = 0;
 int line = 0;
-int array[100];
-
+int array[768];
+int j;
 int temp;
 
 int main(int argc, char* argv[])
 {
+
+	//Key press surfaces constants
+	enum KeyPressSurfaces
+	{
+		KEY_PRESS_SURFACE_DEFAULT,
+		KEY_PRESS_SURFACE_UP,
+		KEY_PRESS_SURFACE_DOWN,
+		KEY_PRESS_SURFACE_LEFT,
+		KEY_PRESS_SURFACE_RIGHT,
+		KEY_PRESS_SURFACE_TOTAL
+	};
+
 	std::fstream file;
 	file.open("list.txt");
 	while (file >> temp) {
@@ -28,10 +40,9 @@ int main(int argc, char* argv[])
 
 		
 
-		if (SDL_CreateWindowAndRenderer(1366, 768, 0, &window, &renderer) == 0) {
+		if (SDL_CreateWindowAndRenderer(1450, 800, 0, &window, &renderer) == 0) {
 			SDL_bool done = SDL_FALSE;
 			screenSurface = SDL_GetWindowSurface(window);
-
 
 			while (!done) {
 				SDL_Event event;
@@ -42,18 +53,33 @@ int main(int argc, char* argv[])
 
 				SDL_SetRenderDrawColor(renderer, 255, 255, 255, SDL_ALPHA_OPAQUE);
 
+				x = 0;
 				for (int number : array) {
-					std::cout << number << std::endl;
-					SDL_RenderDrawLine(renderer, x, 768, x, 500);
+					SDL_RenderDrawLine(renderer, x, 1050, x, 1050 - (number * 2));
 					x += 5;
-					Sleep(5);
+
 				}
+
+
 
 				SDL_RenderPresent(renderer);
 
 				while (SDL_PollEvent(&event)) {
 					if (event.type == SDL_QUIT) {
 						done = SDL_TRUE;
+					}
+					else if (event.type == SDL_KEYDOWN) {
+						for (i = 0; i < 768; i++) {
+							for (j = i + 1; j < 768; j++)
+							{
+								if (array[j] < array[i]) {
+									temp = array[i];
+									array[i] = array[j];
+									array[j] = temp;
+
+								}
+							}
+						}
 					}
 				}
 			}
@@ -85,7 +111,7 @@ int main(int argc, char* argv[])
 //			bool quit = false;
 //
 //			//Event handler
-//			SDL_Event e;
+//			
 //
 //			//While application is running
 //			while (!quit)
